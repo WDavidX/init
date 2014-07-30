@@ -1,0 +1,5 @@
+(add-to-list 'load-path "~/init/eplugins/ac131linux/")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/init/eplugins/ac131linux//ac-dict")
+(ac-config-default)
+(provide 'load_ac131_linux)
