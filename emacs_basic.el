@@ -31,13 +31,15 @@
 (setq split-height-threshold nil) ; let emacs split horizontally for help
 (setq split-width-threshold 0)
 (setq tab-width 2)
+(setq compilation-scroll-output t)
 (setq frame-title-format (list "%b %p  [%f] " (getenv "USERNAME") " %s %Z   " emacs-version))
 (setq require-final-newline t)
 (fset 'yes-or-no-p 'y-or-n-p)  ;; ask by y or n
-
+(setq-default cursor-type 'box)
 
 ;; =============== Packages ===============
 ;(require 'eval-after-load)		
+(require 'spice-mode)
 
 
 ;; =============== Keys ===============
@@ -98,6 +100,7 @@
 		(setq compiler (concat "g++ -g -Wall -std=c99 -o " progname " ")))
     (if (string= suffix "tex") (setq compiler "pdflatex "))
     (if (string= suffix "py") (setq compiler "python "))
+    (if (string= suffix "sp") (setq compiler "hspice "))
     (if (string= suffix "el") (eval-buffer) (compile (concat compiler filename)))))
 (global-unset-key (kbd "C-f"))
 (global-set-key (kbd "C-f") 'onekey-compile)
@@ -172,6 +175,30 @@
 
 ;; (global-unset-key (kbd "M-w"))
 ;; (global-set-key (kbd "M-w") 'copy-line)
+
+
+
+
+;; =============== Modes and Hooks ===============
+;(require 'eval-after-load)		
+(require 'spice-mode)
+(add-to-list 'auto-mode-alist '("\\.sp\\'" . spice-mode))
+
+
+;; (set-face-attribute  'mode-line
+;;    nil
+;;    :foreground "gray100"
+;;    :background "gray25"
+;;    :box '(:line-width 1 :style released-button))
+;; (set-face-attribute  'mode-line-inactive
+;;     nil
+;;     :foreground "gray30"
+;;     :background "gray20"
+;;     :box '(:line-width 1 :style released-button))
+
+;; (require 'highlight-focus)
+(require 'auto-dim-other-buffers)
+
 (if (eq system-type 'window-nt)
   (progn
      (message "Loading windows init file")
@@ -182,6 +209,8 @@
 (if (eq system-type 'gnu/linux)
    (progn
      (message "Loading gnu/linux init file")
-     (load-library "load_ac131_linux")
+     ;(load-library "load_ac131_linux")
+     (load-library "load_ac131_teradyne")
+
    )		
 )
