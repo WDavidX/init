@@ -1,5 +1,6 @@
 ;; Basic Settings for all Emacs 
-
+;; =============== Remove hooks ===============
+;; (remove-hook 'find-file-hook 'vc-find-file-hook)
 ;; =============== Global Varibles ===============
 (if (eq system-type 'windows-nt) 
   (defvar myinit-dir "~/init")
@@ -10,13 +11,15 @@
 (add-to-list 'load-path (concat myplugin-dir "/epy"))
 (add-to-list 'load-path (concat myplugin-dir "/icicles"))
 ;; =============== Modes ===============
-
+;; (iswitchb-mode t)
+(ido-mode)
 (display-time)
 (global-linum-mode t)
 (global-visual-line-mode t)
 (global-font-lock-mode t) 
 (show-paren-mode t)
 (menu-bar-mode -1)
+
 ;; =============== Variables ===============
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-message t)
@@ -32,6 +35,7 @@
 (setq split-width-threshold 0)
 (setq tab-width 2)
 (setq compilation-scroll-output t)
+(setq vc-handled-backends nil)
 (setq frame-title-format (list "%b %p  [%f] " (getenv "USERNAME") " %s %Z   " emacs-version))
 (setq require-final-newline t)
 (fset 'yes-or-no-p 'y-or-n-p)  ;; ask by y or n
@@ -48,6 +52,8 @@
 (global-set-key "\C-z" 'undo)
 (global-set-key "\C-j" 'backward-char)
 (global-set-key "\C-k" 'forward-char)
+(global-set-key (kbd "M-k") 'forward-word)
+(global-set-key (kbd "M-j") 'backward-word)
 (global-set-key (kbd "C-S-j") 'backward-word)
 (global-set-key (kbd "C-S-k") 'forward-word)
 (global-unset-key (kbd "C-x 2"))
@@ -177,13 +183,20 @@
 ;; (global-set-key (kbd "M-w") 'copy-line)
 
 
-
+;; =============== Require Packages ===============
+(require 'buff-menu+)
 
 ;; =============== Modes and Hooks ===============
 ;(require 'eval-after-load)		
 (require 'spice-mode)
 (add-to-list 'auto-mode-alist '("\\.sp\\'" . spice-mode))
 
+(defun split-horizontally-for-temp-buffers ()
+  "Split the window horizontally for temp buffers."
+  (when (and (one-window-p t)
+        (not (active-minibuffer-window)))
+   (split-window-horizontally))) 
+(add-hook 'temp-buffer-setup-hook 'split-horizontally-for-temp-buffers)
 
 ;; (set-face-attribute  'mode-line
 ;;    nil
@@ -195,9 +208,11 @@
 ;;     :foreground "gray30"
 ;;     :background "gray20"
 ;;     :box '(:line-width 1 :style released-button))
-
 ;; (require 'highlight-focus)
-(require 'auto-dim-other-buffers)
+;; (require 'auto-dim-other-buffers)
+
+(if (string-equal system-name "RPi")
+ (load-library "load_ac131_linux"))
 
 (if (eq system-type 'window-nt)
   (progn
@@ -206,11 +221,13 @@
    )
 )
 
+
+
 (if (eq system-type 'gnu/linux)
    (progn
      (message "Loading gnu/linux init file")
-     ;(load-library "load_ac131_linux")
-     (load-library "load_ac131_teradyne")
+    ;; (load-library "load_ac131_linux")
+    ;; (load-library "load_ac131_teradyne")
 
    )		
 )

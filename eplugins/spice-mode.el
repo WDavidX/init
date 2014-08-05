@@ -4356,7 +4356,7 @@ uses cache generated with the `spice-cache-section-p' function."
    " || (a<(yval(a,Tfinal)*(1-ratio))),Tfinal,Tstart) - Tstart"
    'n)
  "settling"
- "macro for extracting the settling cycle of signal A, within ?ratio of value of A at time Tfinal"
+ "macro for extracting the settling cycle of signal A, within �ratio of value of A at time Tfinal"
  'spice-tempo-tags)
 
 
@@ -4680,7 +4680,7 @@ uses cache generated with the `spice-cache-section-p' function."
        (list 'l "IMAX=1")	;; default value 
      (list 'l "IMAX=" '(s imax)))
    '(just-one-space)
-   (p "<Slew rate(V/?s)>: " sr 'noinsert) 
+   (p "<Slew rate(V/�s)>: " sr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'sr) "") 
        (list 'l "SR=0")	;; default value 
      (list 'l "SR=" '(s sr)))
@@ -4877,7 +4877,7 @@ uses cache generated with the `spice-cache-section-p' function."
        (list 'l "TDU=1e-4")	;; default value 
      (list 'l "TDU=" '(s tdu)))
    '(just-one-space)
-   (p "<Slew rate (V/?s)>: " slr 'noinsert) 
+   (p "<Slew rate (V/�s)>: " slr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'slr) "") 
        (list 'l "SLR=1")	;; default value 
      (list 'l "SLR=" '(s slr)))
@@ -4964,7 +4964,7 @@ uses cache generated with the `spice-cache-section-p' function."
        (list 'l "LEVEL=1")	;; default value 
      (list 'l "LEVEL=" '(s level)))
    '(just-one-space)
-   (p "<Slewrate (V/?s)>: " slr 'noinsert) 
+   (p "<Slewrate (V/�s)>: " slr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'slr) "") 
        (list 'l "SLR=10")	;; default value 
      (list 'l "SLR=" '(s slr)))
@@ -5001,7 +5001,7 @@ uses cache generated with the `spice-cache-section-p' function."
        (list 'l "LEVEL=1")	;; default value 
      (list 'l "LEVEL=" '(s level)))
    '(just-one-space)
-   (p "<Slewrate (V/?s)>: " slr 'noinsert) 
+   (p "<Slewrate (V/�s)>: " slr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'slr) "") 
        (list 'l "SLR=10")	;; default value 
      (list 'l "SLR=" '(s slr)))
@@ -5102,7 +5102,7 @@ uses cache generated with the `spice-cache-section-p' function."
        (list 'l "RES=0.5")	;; default value 
      (list 'l "RES=" '(s res)))
    '(just-one-space)
-   (p "<Output slewrate (V/?s)>: " slr 'noinsert) 
+   (p "<Output slewrate (V/�s)>: " slr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'slr) "") 
        (list 'l "SLR=1.0")	;; default value 
      (list 'l "SLR=" '(s slr)))
@@ -5125,12 +5125,12 @@ uses cache generated with the `spice-cache-section-p' function."
    (p "[Negative input]: ") " "
    (p "[Positive Output]: ") " "
    (p "[Negative Output]: ") " param: "
-   (p "<Rise time (?s)>: " tr 'noinsert) 
+   (p "<Rise time (�s)>: " tr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'tr) "") 
        (list 'l "TR=1.0")	;; default value 
      (list 'l "TR=" '(s tr)))
    '(just-one-space)
-   (p "<Fall time (?s)>: " tf 'noinsert) 
+   (p "<Fall time (�s)>: " tf 'noinsert) 
    (if (string-equal (tempo-lookup-named 'tf) "") 
        (list 'l "TF=1.0")	;; default value 
      (list 'l "TF=" '(s tf)))
@@ -5179,12 +5179,12 @@ uses cache generated with the `spice-cache-section-p' function."
    (p "[Positive Output]: ") " "
    (p "[Negative Output]: ") " "
    (p "[Reference node]: ") " param: "
-   (p "<Rise time (?s)>: " tr 'noinsert) 
+   (p "<Rise time (�s)>: " tr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'tr) "") 
        (list 'l "TR=1.0")	;; default value 
      (list 'l "TR=" '(s tr)))
    '(just-one-space)
-   (p "<Fall time (?s)>: " tf 'noinsert) 
+   (p "<Fall time (�s)>: " tf 'noinsert) 
    (if (string-equal (tempo-lookup-named 'tf) "") 
        (list 'l "TF=1.0")	;; default value 
      (list 'l "TF=" '(s tf)))
@@ -8167,7 +8167,7 @@ returns it. Non-comment paragraphs can also be filled correctly."
 (defun spice-about ()
   (interactive)
   (sit-for 0)
-  (message "spice-mode version %s, ? %s" spice-version spice-developer))
+  (message "spice-mode version %s, � %s" spice-version spice-developer))
 
 (defun set-spice-name ()
   "Set mode line name of spice mode"
