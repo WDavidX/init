@@ -20,7 +20,7 @@
 (global-font-lock-mode t) 
 (show-paren-mode t)
 (menu-bar-mode -1)
-
+(tool-bar-mode -1)
 ;; =============== Variables ===============
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-message t)
@@ -40,12 +40,12 @@
 (setq frame-title-format (list "%b %p  [%f] " (getenv "USERNAME") " %s %Z   " emacs-version))
 (setq require-final-newline t)
 (fset 'yes-or-no-p 'y-or-n-p)  ;; ask by y or n
-(setq-default cursor-type 'box)
+;(setq-default cursor-type 'box)
 
 
 ;; =============== Packages ===============
 ;(require 'eval-after-load)		
-(require 'spice-mode)
+(ignore-errors (require 'spice-mode))
 
 
 ;; =============== Keys ===============
@@ -187,7 +187,10 @@
 
 ;; =============== Require Packages ===============
 (require 'buff-menu+)
-
+(require 'cursor-chg) ; Load the library
+(toggle-cursor-type-when-idle 1) ; Turn on cursor change when Emacs is idle
+(change-cursor-mode 1) ; Turn on change for overwrite, read-only, and input mode
+(curchg-change-cursor-when-idle-interval 5) ; change the idle timer
 ;; =============== Modes and Hooks ===============
 ;(require 'eval-after-load)
 (setq ido-enable-flex-matching t)
@@ -225,6 +228,11 @@
   (progn
      (message "Loading windows init file")
      (load-library "load_ac131_win")
+     (set-frame-font "Monaco 12")
+     (require 'color-theme)
+     (ignore-errors (color-theme-arjen))
+     (global-set-key (vector (list 'control mouse-wheel-down-event)) (lambda () (interactive) (text-scale-decrease 1)))
+     (global-set-key (vector (list 'control mouse-wheel-up-event)) (lambda () (interactive) (text-scale-increase 1)))
    )
 )
 
