@@ -10,9 +10,10 @@
 (add-to-list 'load-path myplugin-dir)
 (add-to-list 'load-path (concat myplugin-dir "/epy"))
 (add-to-list 'load-path (concat myplugin-dir "/icicles"))
+(add-to-list 'load-path (concat myplugin-dir "/single-files"))
+(require 'eval-after-load)
 ;; =============== Modes ===============
 ;; (iswitchb-mode t)
-(ido-mode)
 (display-time)
 (global-linum-mode t)
 (global-visual-line-mode t)
@@ -40,6 +41,7 @@
 (setq require-final-newline t)
 (fset 'yes-or-no-p 'y-or-n-p)  ;; ask by y or n
 (setq-default cursor-type 'box)
+
 
 ;; =============== Packages ===============
 ;(require 'eval-after-load)		
@@ -187,7 +189,12 @@
 (require 'buff-menu+)
 
 ;; =============== Modes and Hooks ===============
-;(require 'eval-after-load)		
+;(require 'eval-after-load)
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere)
+(ido-mode t)
+
+
 (require 'spice-mode)
 (add-to-list 'auto-mode-alist '("\\.sp\\'" . spice-mode))
 
@@ -214,7 +221,7 @@
 (if (string-equal system-name "RPi")
  (load-library "load_ac131_linux"))
 
-(if (eq system-type 'window-nt)
+(if (eq system-type 'windows-nt)
   (progn
      (message "Loading windows init file")
      (load-library "load_ac131_win")
