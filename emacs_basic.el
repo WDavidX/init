@@ -191,6 +191,7 @@
 (toggle-cursor-type-when-idle 1) ; Turn on cursor change when Emacs is idle
 (change-cursor-mode 1) ; Turn on change for overwrite, read-only, and input mode
 (curchg-change-cursor-when-idle-interval 5) ; change the idle timer
+(load-library "dvpython")
 ;; =============== Modes and Hooks ===============
 ;(require 'eval-after-load)
 (setq ido-enable-flex-matching t)
