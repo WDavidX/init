@@ -1,0 +1,10 @@
+[user]
+	name = David Xu
+	email = mysolowing@gmail.com
+[color]
+  diff = auto
+  status = auto
+  branch = auto
+  interactive = auto
+  ui = true
+  pager = true

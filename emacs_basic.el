@@ -1,8 +1,8 @@
-;; Basic Settings for all Emacs 
+;; Basic Settings for all Emacs
 ;; =============== Remove hooks ===============
 ;; (remove-hook 'find-file-hook 'vc-find-file-hook)
 ;; =============== Global Varibles ===============
-(if (eq system-type 'windows-nt) 
+(if (eq system-type 'windows-nt)
   (defvar myinit-dir "~/init")
   (defvar myinit-dir "~/init"))
 (defvar myplugin-dir (concat myinit-dir "/eplugins"))
@@ -17,7 +17,7 @@
 (display-time)
 (global-linum-mode t)
 (global-visual-line-mode t)
-(global-font-lock-mode t) 
+(global-font-lock-mode t)
 (show-paren-mode t)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
@@ -44,7 +44,7 @@
 
 
 ;; =============== Packages ===============
-;(require 'eval-after-load)		
+;(require 'eval-after-load)
 (ignore-errors (require 'spice-mode))
 
 
@@ -60,7 +60,7 @@
 (global-set-key (kbd "C-S-k") 'forward-word)
 (global-unset-key (kbd "C-x 2"))
 (global-set-key (kbd "C-x 2") 'split-window-horizontally)
-(global-set-key (kbd "C-q") 'delete-other-windows)
+(global-set-key (kbd "M-o") 'delete-other-windows)
 (global-set-key (kbd "C-v") 'yank)
 (global-set-key (kbd "M-m") 'set-mark-command)
 (define-key global-map (kbd "RET") 'newline-and-indent)
@@ -71,7 +71,7 @@
 		(lambda() (interactive) (find-file "~/init/emacs_basic.el")))
 (global-set-key [(f12)] (lambda()
 		(interactive)(save-some-buffers (buffer-file-name)) (eval-buffer))) ;; evaluate buffer
-		
+
 ;(setq inhibit-startup-echo-area-message nil)
 ; The Backspace key: Control-? (127)
 ; The Home and End keys: Standard
@@ -206,9 +206,10 @@
   "Split the window horizontally for temp buffers."
   (when (and (one-window-p t)
         (not (active-minibuffer-window)))
-   (split-window-horizontally))) 
+   (split-window-horizontally)))
 (add-hook 'temp-buffer-setup-hook 'split-horizontally-for-temp-buffers)
 
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 ;; (set-face-attribute  'mode-line
 ;;    nil
 ;;    :foreground "gray100"
@@ -245,5 +246,5 @@
     ;; (load-library "load_ac131_linux")
     ;; (load-library "load_ac131_teradyne")
 
-   )		
+   )
 )
