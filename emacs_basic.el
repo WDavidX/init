@@ -41,6 +41,7 @@
 (setq require-final-newline t)
 (fset 'yes-or-no-p 'y-or-n-p)  ;; ask by y or n
 ;(setq-default cursor-type 'box)
+(setq tramp-default-method "ftp")
 
 
 ;; =============== Packages ===============
@@ -211,19 +212,26 @@
 (add-hook 'temp-buffer-setup-hook 'split-horizontally-for-temp-buffers)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-;; (set-face-attribute  'mode-line
-;;    nil
-;;    :foreground "gray100"
-;;    :background "gray25"
-;;    :box '(:line-width 1 :style released-button))
-;; (set-face-attribute  'mode-line-inactive
-;;     nil
-;;     :foreground "gray30"
-;;     :background "gray20"
-;;     :box '(:line-width 1 :style released-button))
-;; (require 'highlight-focus)
-;; (require 'auto-dim-other-buffers)
 
+; could be bad, will not let you save at all, until you correct the error
+ (add-hook 'emacs-lisp-mode-hook
+  (function (lambda ()
+   (add-hook 'local-write-file-hooks
+    'check-parens))))
+
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(add-hook 'markdown-mode-hook
+            (lambda ()
+              (when buffer-file-name
+                (add-hook 'after-save-hook
+                          'check-parens
+                          nil t))))
+
+;; =============== Optional Loads ===============
 (if (string-equal system-name "RPi")
  (load-library "load_ac131_linux"))
 

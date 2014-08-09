@@ -11,7 +11,7 @@
 [core]
 	pager = less -R
 	editor = emacs -q
-	autocrlf = true
+	autocrlf = input
 [alias]
   la = "!git config -l | grep alias | cut -c 7-"  # list all alias
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit  # color log
