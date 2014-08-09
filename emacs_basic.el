@@ -40,20 +40,26 @@
 (setq frame-title-format (list "%b %p  [%f] " (getenv "USERNAME") " %s %Z   " emacs-version))
 (setq require-final-newline t)
 (fset 'yes-or-no-p 'y-or-n-p)  ;; ask by y or n
-;(setq-default cursor-type 'box)
 (setq tramp-default-method "ftp")
 
+;; ==================== System Coding ====================
+(setq buffer-file-coding-system 'utf-8-unix)
+(setq default-file-name-coding-system 'utf-8-unix)
+(setq default-keyboard-coding-system 'utf-8-unix)
+(setq default-sendmail-coding-system 'utf-8-unix)
+(setq default-terminal-coding-system 'utf-8-unix)
 
 ;; =============== Packages ===============
 ;(require 'eval-after-load)
 (ignore-errors (require 'spice-mode))
 
-
 ;; =============== Keys ===============
 (global-set-key (kbd "C-q") 'suspend-emacs)
 (global-set-key (kbd "M-q") 'toggle-read-only)
 (global-set-key "\C-o" 'other-window)
+(defalias 'redo 'undo-tree-redo)
 (global-set-key "\C-z" 'undo)
+(global-set-key "\C-y" 'redo)
 (global-set-key "\C-j" 'backward-char)
 (global-set-key "\C-k" 'forward-char)
 (global-set-key (kbd "M-k") 'forward-word)
@@ -66,6 +72,9 @@
 (global-set-key (kbd "C-v") 'yank)
 (global-set-key (kbd "M-m") 'set-mark-command)
 (define-key global-map (kbd "RET") 'newline-and-indent)
+(global-unset-key (kbd "M-w"))
+(global-set-key (kbd "M-w") 'delete-other-windows)
+(global-set-key "\M-z" 'repeat-complex-command)
 ;; ----------------F Keys ------------------------
 
 (global-unset-key [(f11)])
@@ -84,7 +93,7 @@
 ;; =============== Functions and kbd ===============
 ;; ----------------------------------------
 ;; (global-set-key (kbd "M-l") (lambda() (interactive) (end-of-visual-line)(eval-last-sexp))
-(global-set-key (kbd "M-l") 'eval-last-sexp)
+;; (global-set-key (kbd "M-l") 'eval-last-sexp)
 ;; ----------------------------------------
 (global-set-key (kbd "M-n")     ; page down
   (lambda () (interactive)
@@ -112,8 +121,8 @@
     (if (string= suffix "py") (setq compiler "python "))
     (if (string= suffix "sp") (setq compiler "hspice "))
     (if (string= suffix "el") (eval-buffer) (compile (concat compiler filename)))))
-(global-unset-key (kbd "C-f"))
-(global-set-key (kbd "C-f") 'onekey-compile)
+(global-unset-key (kbd "C-b"))
+(global-set-key (kbd "C-b") 'onekey-compile)
 ;; ----------------------------------------
 (defun comment-or-uncomment-region-or-line ()
     "Comments or uncomments the region or the current line if there's no active region."
@@ -174,13 +183,19 @@
             (goto-char beg))
           (sit-for blink-matching-delay))))
 (global-set-key [remap kill-ring-save] 'my-kill-ring-save)
-(global-set-key (kbd "C-y") 'my-kill-ring-save)
+(global-unset-key (kbd "C-f"))
+(global-set-key (kbd "C-f") 'my-kill-ring-save)
 ;; ----------------------------------------
 (defun switch-to-previous-buffer ()
       (interactive)
       (switch-to-buffer (other-buffer (current-buffer) 1)))
 
-(global-set-key (kbd "C-l") 'switch-to-previous-buffer)
+(require 'swbuff)
+(require 'swbuff-x)
+(setq swbuff-start-with-current-centered 1)
+(global-set-key (kbd "C-l") 'swbuff-switch-to-next-buffer)
+(global-set-key (kbd "M-l") 'swbuff-switch-to-previous-buffer)
+
 ;; ----------------------------------------
 
 ;; (global-unset-key (kbd "M-w"))
@@ -209,7 +224,7 @@
   (when (and (one-window-p t)
         (not (active-minibuffer-window)))
    (split-window-horizontally)))
-(add-hook 'temp-buffer-setup-hook 'split-horizontally-for-temp-buffers)
+;(add-hook 'temp-buffer-setup-hook 'split-horizontally-for-temp-buffers)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
