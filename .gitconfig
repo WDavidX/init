@@ -8,3 +8,24 @@
   interactive = auto
   ui = true
   pager = true
+[core]
+	pager = less -R
+	editor = emacs -q
+	autocrlf = true
+[alias]
+  la = "!git config -l | grep alias | cut -c 7-"  # list all alias
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit  # color log
+	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+  ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate  
+  ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
+  ld = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=relative  # list date relative
+  lds = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short    # list date short
+  le = log --oneline --decorate
+  dl = "!git ll -1"         # Show modified files in last commit
+  dlc = diff --cached HEAD^ # dlc = diff --cached HEAD^
+  graph = log --all --graph --decorate --oneline -n30
+  
+  cb = !git branch | grep ^* | cut -d' ' -f2
+  sb = !ls .git/refs/remotes/*/$(git cb) | cut -d/ -f4,5 | \
+       xargs git show-branch $(git cb)
+       

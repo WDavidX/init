@@ -49,6 +49,7 @@
 
 
 ;; =============== Keys ===============
+(global-set-key (kbd "C-q") 'suspend-emacs)
 (global-set-key (kbd "M-q") 'toggle-read-only)
 (global-set-key "\C-o" 'other-window)
 (global-set-key "\C-z" 'undo)
