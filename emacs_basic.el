@@ -52,7 +52,13 @@
 ;; =============== Packages ===============
 ;(require 'eval-after-load)
 (ignore-errors (require 'spice-mode))
-
+;; =============== Require Packages ===============
+(require 'buff-menu+)
+(require 'cursor-chg) ; Load the library
+(toggle-cursor-type-when-idle 1) ; Turn on cursor change when Emacs is idle
+(change-cursor-mode 1) ; Turn on change for overwrite, read-only, and input mode
+(curchg-change-cursor-when-idle-interval 5) ; change the idle timer
+(load-library "dvpython")
 ;; =============== Keys ===============
 (global-set-key (kbd "C-q") 'suspend-emacs)
 (global-set-key (kbd "M-q") 'toggle-read-only)
@@ -60,6 +66,7 @@
 (defalias 'redo 'undo-tree-redo)
 (global-set-key "\C-z" 'undo)
 (global-set-key "\C-y" 'redo)
+(global-unset-key "\C-j")
 (global-set-key "\C-j" 'backward-char)
 (global-set-key "\C-k" 'forward-char)
 (global-set-key (kbd "M-k") 'forward-word)
@@ -202,13 +209,7 @@
 ;; (global-set-key (kbd "M-w") 'copy-line)
 
 
-;; =============== Require Packages ===============
-(require 'buff-menu+)
-(require 'cursor-chg) ; Load the library
-(toggle-cursor-type-when-idle 1) ; Turn on cursor change when Emacs is idle
-(change-cursor-mode 1) ; Turn on change for overwrite, read-only, and input mode
-(curchg-change-cursor-when-idle-interval 5) ; change the idle timer
-(load-library "dvpython")
+
 ;; =============== Modes and Hooks ===============
 ;(require 'eval-after-load)
 (setq ido-enable-flex-matching t)

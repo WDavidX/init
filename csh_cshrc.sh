@@ -14,7 +14,7 @@
 #   For an explanation of the octal encoding, see "man chmod".
 #
 
-umask 027
+umask 022
 
 # set     red="%{\033[1;31m%}"
 # set   green="%{\033[0;32m%}"

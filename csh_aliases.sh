@@ -5,9 +5,9 @@ alias a		'alias \!:*'
 alias cd	'cd \!:*; echo $cwd'
 alias pwd	'echo $cwd'
 alias ls    'ls -F --color=tty'
-alias la    'ls -aCFh --color=tty'
-alias ll	'ls  -lF --color=tty'
-alias lla	'ls  -lFa --color=tty'
+alias la    'ls -ACFh --color=tty'
+alias lla	'ls  -lFAh --color=tty'
+alias lls	'ls  -lFh --color=tty'
 alias rm	'rm -r'
 alias cp	'cp -r'
 alias j		'jobs -l'
@@ -46,11 +46,11 @@ if (( -x /usr/bin/git) || ( -x /bin/git))  then
   set __git_cmd_names = (add bisect blame branch checkout clone commit config \
   diff diff-files difftool fetch grep gui init log merge mv pull push \
   rebase reset rm show shortlog stash status tag)
-   
+
   alias __git_aliases 'git config --get-regexp "alias.*" | sed -n "s,alias\.\([^ ]*\).*,\1,p"'
   alias __git_branches 'git for-each-ref ¨Cformat="%(refname)" refs/heads refs/remotes | sed -e s,refs/remotes/,, | sed -e s,refs/heads/,,'
   alias __git_origin_branches 'git for-each-ref ¨Cformat="%(refname)" refs/remotes/origin | grep -v HEAD | sed -e s,refs/remotes/origin/,,'
-   
+
   # Define the completions (see the tcsh man page).
   complete git \
   'p/1/`__git_aliases | xargs echo $__git_cmd_names`/' \
