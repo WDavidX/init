@@ -12,23 +12,10 @@
 (add-to-list 'load-path (concat myplugin-dir "/icicles"))
 (add-to-list 'load-path (concat myplugin-dir "/single-files"))
 (require 'eval-after-load)
-
-;; =============== Linum and color-theme ===============
-(if (> emacs-major-version 22)
-   (progn
-	 (global-linum-mode t)
-	 (global-visual-line-mode t)
-	 (setq split-height-threshold nil) ; let emacs split horizontally for help
-(setq split-width-threshold 0)
-	 )
-)
-   (require 'color-theme)
-   (ignore-errors (color-theme-arjen))
-
 ;; =============== Modes ===============
 ;; (iswitchb-mode t)
 (display-time)
-
+(global-visual-line-mode t)
 (global-font-lock-mode t)
 (show-paren-mode t)
 (menu-bar-mode -1)
@@ -44,6 +31,8 @@
 (setq auto-save-default nil)    ;disable auto save
 (setq scroll-margin 3 scroll-conservatively 10000 scroll-up-aggressively 0.01 scroll-down-aggressively 0.01)
 (setq auto-window-vscroll nil)
+(setq split-height-threshold nil) ; let emacs split horizontally for help
+(setq split-width-threshold 0)
 (setq tab-width 2)
 (setq compilation-scroll-output t)
 (setq vc-handled-backends nil)
@@ -62,12 +51,6 @@
 ;; =============== Packages ===============
 ;(require 'eval-after-load)
 ;; =============== Require Packages ===============
-;(require 'buff-menu+)
-(require 'cursor-chg) ; Load the library
-(toggle-cursor-type-when-idle 1) ; Turn on cursor change when Emacs is idle
-(change-cursor-mode 1) ; Turn on change for overwrite, read-only, and input mode
-(curchg-change-cursor-when-idle-interval 5) ; change the idle timer
-;(load-library "dvpython")
 ;; =============== Keys ===============
 (global-set-key (kbd "C-q") 'suspend-emacs)
 (global-set-key (kbd "M-q") 'toggle-read-only)
@@ -122,34 +105,6 @@
 (global-unset-key [(f9)])
 (global-set-key [(f9)]	(lambda()(interactive) (switch-to-buffer "*scratch*")))
 ;; ----------------------------------------
-(defun onekey-compile ()
-   "Compile current buffer"
-  (save-some-buffers (buffer-file-name))
-  (interactive)
-  (let (filename suffix progname compiler)
-    (setq filename (file-name-nondirectory buffer-file-name))
-    (setq progname (file-name-sans-extension filename))
-    (setq suffix (file-name-extension filename))
-    (if (string= suffix "c") (setq compiler (concat "gcc -std=c99 -g -Wall -o " progname " ")))
-    (if (or (string= suffix "cc") (string= suffix "cpp"))
-		(setq compiler (concat "g++ -g -Wall -std=c99 -o " progname " ")))
-    (if (string= suffix "tex") (setq compiler "pdflatex "))
-    (if (string= suffix "py") (setq compiler "python "))
-    (if (string= suffix "sp") (setq compiler "hspice "))
-    (if (string= suffix "el") (eval-buffer) (compile (concat compiler filename)))))
-(global-unset-key (kbd "C-b"))
-(global-set-key (kbd "C-b") 'onekey-compile)
-;; ----------------------------------------
-(defun comment-or-uncomment-region-or-line ()
-    "Comments or uncomments the region or the current line if there's no active region."
-    (interactive)
-    (let (beg end)
-        (if (region-active-p)
-            (setq beg (region-beginning) end (region-end))
-            (setq beg (line-beginning-position) end (line-end-position)))
-        (comment-or-uncomment-region beg end)))
-(global-unset-key (kbd "C-_"))
-(global-set-key (kbd "C-_") 'comment-or-uncomment-region-or-line)
 
 ;; set new method of kill a whole line
 (defadvice kill-ring-save (before slickcopy activate compile)
@@ -202,21 +157,6 @@
 (global-unset-key (kbd "C-f"))
 (global-set-key (kbd "C-f") 'my-kill-ring-save)
 ;; ----------------------------------------
-(defun switch-to-previous-buffer ()
-      (interactive)
-      (switch-to-buffer (other-buffer (current-buffer) 1)))
-
-(require 'swbuff)
-(require 'swbuff-x)
-(setq swbuff-start-with-current-centered 1)
-(global-set-key (kbd "C-l") 'swbuff-switch-to-next-buffer)
-(global-set-key (kbd "M-l") 'swbuff-switch-to-previous-buffer)
-
-;; ----------------------------------------
-
-;; (global-unset-key (kbd "M-w"))
-;; (global-set-key (kbd "M-w") 'copy-line)
-
 
 
 ;; =============== Modes and Hooks ===============
@@ -230,6 +170,8 @@
 (add-to-list 'auto-mode-alist '("\\.sp\\'" . spice-mode))
 (add-to-list 'auto-mode-alist '("\\.inc\\'" . spice-mode))
 (add-to-list 'auto-mode-alist '("\\.cir\\'" . spice-mode))
+(add-to-list 'auto-mode-alist '("\\.tempy\\'" . spice-mode))
+(add-to-list 'auto-mode-alist '("\\.meas\\'" . spice-mode))
 
 (defun split-horizontally-for-temp-buffers ()
   "Split the window horizontally for temp buffers."
@@ -259,31 +201,16 @@
                           nil t))))
 
 ;; =============== Load Auto Complete ===============
-(if (string-equal system-name "RPi")
- (load-library "load_ac131_linux"))
-
-(if (eq system-type 'windows-nt)
-  (progn
-     (message "Loading windows init file")
-     (load-library "load_ac131_win")
-     (set-frame-font "Monaco 12")
-     (require 'color-theme)
-     (ignore-errors (color-theme-arjen))
-     (global-set-key (vector (list 'control mouse-wheel-up-event)) (lambda () (interactive) (text-scale-decrease 1)))
-     (global-set-key (vector (list 'control mouse-wheel-down-event)) (lambda () (interactive) (text-scale-increase 1)))
-   )
-)
-
-(if (eq system-type 'gnu/linux)
+(if (> emacs-major-version 22)
    (progn
-    ;; (message "Loading gnu/linux init file")
-    ;; (load-library "load_ac131_linux")
-    ;; (load-library "load_ac131_teradyne")
-		 (global-set-key (vector (list 'control mouse-wheel-up-event)) (lambda () (interactive) (text-scale-decrease 1)))
-     (global-set-key (vector (list 'control mouse-wheel-down-event)) (lambda () (interactive) (text-scale-increase 1)))
-   )
+	 (global-linum-mode t)
+         (require 'color-theme)
+         (ignore-errors (color-theme-arjen))
+	 )
 )
-
-
+ (global-set-key (vector (list 'control mouse-wheel-up-event)) (lambda () (interactive) (text-scale-decrease 1)))
+     (global-set-key (vector (list 'control mouse-wheel-down-event)) (lambda () (interactive) (text-scale-increase 1)))
 
 (message (format "%s" system-type))
+
+(view-mode t)

@@ -5,13 +5,12 @@
 ;; Author: Geert A. M. Van der Plas <geert_vanderplas@email.com> 1999-
 ;;         Emmanuel Rouat <emmanuel.rouat@wanadoo.fr> 1997-
 ;;         Carlin J. Vieri, MIT AI Lab <cvieri@ai.mit.edu> 1994 
-;; Keywords: spice, spice2g6, spice3, eldo, hspice, layla, mondriaan, fasthenry, CDL, spectre compatibility, netlist editing
+;; Keywords: ngspice, gnucap, spice, spice2g6, spice3, eldo, hspice, layla, mondriaan, fasthenry, CDL, spectre compatibility, netlist editing
 ;; Filename: spice-mode.el
 ;; Version: 1.2.25
 ;; Maintainer: Geert A. M. Van der Plas <geert_vanderplas@email.com>
 ;; Last-Updated: 01 November 2004
 ;; Description: spice file editing
-;; URL: http://spice-mode.4t.com/
 ;; URL: http://spice-mode.4t.com/
 ;; old-URL: http://www.esat.kuleuven.ac.be/~vdplas/emacs/
 ;; Compatibility: Emacs2[01], (partly tested)XEmacs21
@@ -58,6 +57,8 @@
 ;; (setq auto-mode-alist (append (list (cons "\\.sp$" 'spice-mode)
 ;; 				       (cons "\\.cir$" 'spice-mode)
 ;; 				       (cons "\\.ckt$" 'spice-mode)
+;;                     (cons "\\.spc$" 'spice-mode) ; xcircuit output
+;;                     (cons "\\.spice$" 'spice-mode) ; magic output
 ;; 				       (cons "\\.mod$" 'spice-mode)
 ;; 				       (cons "\\.cdl$" 'spice-mode)
 ;; 				       (cons "\\.chi$" 'spice-mode) ;eldo outpt
@@ -90,7 +91,7 @@
 ;;  '(spice-standard (quote (spice2g6 (hspice eldo))))    ;; hspice and eldo
 ;;  '(spice-standard (quote (spice2g6 ())))               ;; spice2g6/3 only
 ;;  '(spice-simulator "Spice3")                           ;; default simulator
-;;  '(spice-waveform-viewer "Nutmeg")                     ;; default waveform 
+;;  '(spice-waveform-viewer "ngnutmeg")                   ;; default waveform 
 ;;  '(spice-highlight-keywords nil)                       ;; less highlighting
 ;;  '(spice-section-alist                                 ;; add own sections
 ;;    ;; this is ugly, I know ;)
@@ -147,7 +148,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defconst spice-version "1.2.25 (03 Jan 2007)"
+;; free variables
+
+(defvar fume-function-name-regexp-alist)
+(defvar fume-function-name-regexp)
+(defvar compilation-file-regexp-alist)
+(defvar fume-find-function-name-method-alist)
+(defvar fume-menubar-menu-name)
+(defvar fume-buffer-menu)
+(defvar fume-buffer-name)
+(defvar fume-index-method)
+(defvar msb-menu-cond)
+
+(defconst spice-version "1.2.26 (12 Dec 2009)"
   "Current version of spice mode (spice2g6/spice3/hspice/eldo(rf&verilog-a)/fasthenry/layla/mondriaan/draccdl/spectre).")
 
 (defconst spice-developer 
@@ -159,7 +172,6 @@
 
 (defvar spice-tempo-tags nil
   "List of templates used in spice mode.")
-
 
 ;; help function
 (defun spice-custom-set (variable value &rest functions)
@@ -194,6 +206,7 @@ bound) afterwards."
 Basic standard:
   Spice2g6    : Original Berkeley Spice (leave this always on!)
 Additional standards:
+  Gnucap      : The Gnu Circuit Analysis Package
   Hspice (TM) : Commercial Spice, formerly Meta Software, now owned by Synopsys
   Eldo (TM)   : Commercial Spice, formerly Anacad, now owned by Mentor Graphics
   EldoRf (TM) : RF Steady State analyses of Eldo (also turn on Eldo!)
@@ -300,7 +313,7 @@ variable and insert its contents into the buffer."
   '(
     ;; Spice3; spice3 -b <file.cir> 
     ;; 
-    ("Spice3" "spice3 -b" ""
+    ("Gnucap" "gnucap -b" ""
      ("\\s-*Error[\t ]+on[ \t]+line[\t ]+\\([0-9]+\\) +:.+" 
       0 1 nil (buffer-file-name)) 
      ("Circuit: \\(.*\\)$" 1)) ; spice3 hack, is not the filename, but that's no prob
@@ -391,9 +404,9 @@ see also `spice-simulator'."
   '(
     ;; Nutmeg; nutmeg <waveformdata.dat> 
     ;; 
-    ("Nutmeg"  "nutmeg" "" spice-run-interactive (".dat" ".ac0" ".tr0")) ; spice3 nutmeg viewer
     ("Gwave"   "gwave"  "" spice-run-silent 
      (".raw" ".braw" ".ac0" ".tr0" ".sw0" ".W" ".N" ".acs")) ; gwave viewer
+    ("ngnutmeg"  "ngnutmeg" "" spice-run-interactive (".dat" ".ac0" ".tr0")) ; spice3 nutmeg viewer
     ("Xelga"   "xelga"  "" spice-run-silent ".cou") ; xelga eldo viewer
     ("Awaves"  "awaves_emacs" "" spice-run-silent (".ac0" ".tr0")) ; awaves hspice viewer, this doesn't work yet and will it ever ? Explanation: awaves is a script that starts an executable/binary in the background. This means the shell starting awaves ends immediately after the forking of the executable; after which all backgrounded programs get killed by emacs since their parent's parent shell (/bin/sh) ends. awaves shouldn't return immediately and then this will work; that's why I called the program awaves_emacs...
 
@@ -432,7 +445,7 @@ waveform viewer command.
 
 
 ;;;###autoload
-(defcustom spice-waveform-viewer nil ; example: "Nutmeg"
+(defcustom spice-waveform-viewer nil ; example: "ngnutmeg"
   "*Spice command, used when starting waveform viewer,
 see also `spice-waveform-viewer-switches'."
   :group 'spice-simulate
@@ -2135,7 +2148,9 @@ Doc comments (starting with '!') are unaffected."
 ;;; libraries & include files (taken & adapted from eldo-mode.el, E. Rouat)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;(if spice-running-xemacs    (require 'overlay)  (require 'lucid)) ;; what else can we do ??
+(if spice-running-xemacs
+    (require 'overlay)
+  (require 'lucid)) ;; what else can we do ??
 
 ;;------------------------------------------------------------
 ;; Mouse bindings (only used by 'spice-load-file-at-mouse')
@@ -4355,7 +4370,7 @@ uses cache generated with the `spice-cache-section-p' function."
    " || (a<(yval(a,Tfinal)*(1-ratio))),Tfinal,Tstart) - Tstart"
    'n)
  "settling"
- "macro for extracting the settling cycle of signal A, within ÷ratio of value of A at time Tfinal"
+ "macro for extracting the settling cycle of signal A, within 켼atio of value of A at time Tfinal"
  'spice-tempo-tags)
 
 
@@ -4679,7 +4694,7 @@ uses cache generated with the `spice-cache-section-p' function."
        (list 'l "IMAX=1")	;; default value 
      (list 'l "IMAX=" '(s imax)))
    '(just-one-space)
-   (p "<Slew rate(V/┢s)>: " sr 'noinsert) 
+   (p "<Slew rate(V/탎)>: " sr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'sr) "") 
        (list 'l "SR=0")	;; default value 
      (list 'l "SR=" '(s sr)))
@@ -4876,7 +4891,7 @@ uses cache generated with the `spice-cache-section-p' function."
        (list 'l "TDU=1e-4")	;; default value 
      (list 'l "TDU=" '(s tdu)))
    '(just-one-space)
-   (p "<Slew rate (V/┢s)>: " slr 'noinsert) 
+   (p "<Slew rate (V/탎)>: " slr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'slr) "") 
        (list 'l "SLR=1")	;; default value 
      (list 'l "SLR=" '(s slr)))
@@ -4963,7 +4978,7 @@ uses cache generated with the `spice-cache-section-p' function."
        (list 'l "LEVEL=1")	;; default value 
      (list 'l "LEVEL=" '(s level)))
    '(just-one-space)
-   (p "<Slewrate (V/┢s)>: " slr 'noinsert) 
+   (p "<Slewrate (V/탎)>: " slr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'slr) "") 
        (list 'l "SLR=10")	;; default value 
      (list 'l "SLR=" '(s slr)))
@@ -5000,7 +5015,7 @@ uses cache generated with the `spice-cache-section-p' function."
        (list 'l "LEVEL=1")	;; default value 
      (list 'l "LEVEL=" '(s level)))
    '(just-one-space)
-   (p "<Slewrate (V/┢s)>: " slr 'noinsert) 
+   (p "<Slewrate (V/탎)>: " slr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'slr) "") 
        (list 'l "SLR=10")	;; default value 
      (list 'l "SLR=" '(s slr)))
@@ -5101,7 +5116,7 @@ uses cache generated with the `spice-cache-section-p' function."
        (list 'l "RES=0.5")	;; default value 
      (list 'l "RES=" '(s res)))
    '(just-one-space)
-   (p "<Output slewrate (V/┢s)>: " slr 'noinsert) 
+   (p "<Output slewrate (V/탎)>: " slr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'slr) "") 
        (list 'l "SLR=1.0")	;; default value 
      (list 'l "SLR=" '(s slr)))
@@ -5124,12 +5139,12 @@ uses cache generated with the `spice-cache-section-p' function."
    (p "[Negative input]: ") " "
    (p "[Positive Output]: ") " "
    (p "[Negative Output]: ") " param: "
-   (p "<Rise time (┢s)>: " tr 'noinsert) 
+   (p "<Rise time (탎)>: " tr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'tr) "") 
        (list 'l "TR=1.0")	;; default value 
      (list 'l "TR=" '(s tr)))
    '(just-one-space)
-   (p "<Fall time (┢s)>: " tf 'noinsert) 
+   (p "<Fall time (탎)>: " tf 'noinsert) 
    (if (string-equal (tempo-lookup-named 'tf) "") 
        (list 'l "TF=1.0")	;; default value 
      (list 'l "TF=" '(s tf)))
@@ -5178,12 +5193,12 @@ uses cache generated with the `spice-cache-section-p' function."
    (p "[Positive Output]: ") " "
    (p "[Negative Output]: ") " "
    (p "[Reference node]: ") " param: "
-   (p "<Rise time (┢s)>: " tr 'noinsert) 
+   (p "<Rise time (탎)>: " tr 'noinsert) 
    (if (string-equal (tempo-lookup-named 'tr) "") 
        (list 'l "TR=1.0")	;; default value 
      (list 'l "TR=" '(s tr)))
    '(just-one-space)
-   (p "<Fall time (┢s)>: " tf 'noinsert) 
+   (p "<Fall time (탎)>: " tf 'noinsert) 
    (if (string-equal (tempo-lookup-named 'tf) "") 
        (list 'l "TF=1.0")	;; default value 
      (list 'l "TF=" '(s tf)))
@@ -6245,19 +6260,19 @@ uses cache generated with the `spice-cache-section-p' function."
 
 (defmacro spice-layla-function-template (name type)
   "Create a layla tempo define for name and type"
-  (` (let (p_prompt)
-       (setq p_prompt (concat "[Name of " (, name) "]: "))
+  `(let (p_prompt)
+       (setq p_prompt (concat "[Name of " ,name "]: "))
        (tempo-define-template 
-	(concat "layla-" (, name) "-" (, type))
-	(list (concat "." (, name) "_" (, type) "_param(")
+	(concat "layla-" ,name "-" ,type)
+	(list (concat "." ,name "_" ,type "_param(")
 	   (list 'p p_prompt) ", "
 	   '(p "[Name of parameter]: ") ", "
 	   '(p "[Value of parameter]: ") ")"
 	   'n)
-	(concat "layla-" (, name) "-" (, type))
-	(concat "template for inserting a " (, type) " parameter for a Layla "
-		(, name))
-	'spice-tempo-tags))))
+	(concat "layla-" ,name "-" ,type)
+	(concat "template for inserting a " ,type " parameter for a Layla "
+		,name)
+	'spice-tempo-tags)))
 
 (spice-layla-function-template "bus" "double")
 (spice-layla-function-template "bus" "integer")
@@ -7296,7 +7311,7 @@ is t, the filename itself is returned unmodified."
       (message "started %s" command)
       (if spice-after-start-process-function
 	  (funcall spice-after-start-process-function process))
-      (process-kill-without-query process))))
+      (process-query-on-exit-flag process))))
 
 (defun spice-run-interactive (name command file)
   "Run waveform viewer interactively.
@@ -7487,7 +7502,6 @@ that has been selected."
     ) ; when
   )
 
-
 (defun spice-func-menu-init ()
   "Initialize function menu." ; buffer local stuff
   ;; hook in the spice-mode mode regular expression above into the
@@ -7515,7 +7529,7 @@ that has been selected."
   (setq fume-menubar-menu-name "Subckts"
 	fume-buffer-name "*Subcircuits List*"
 	fume-index-method 2)
-  (make-local-hook 'find-file-hooks)
+  ;; (make-local-hook 'find-file-hooks) not available since Emacs 21.1
   (add-hook 'find-file-hooks 'fume-add-menubar-entry)   
   (define-key global-map '(shift button2) 'fume-mouse-function-goto)
   (fume-add-menubar-entry))
@@ -8166,49 +8180,12 @@ returns it. Non-comment paragraphs can also be filled correctly."
 (defun spice-about ()
   (interactive)
   (sit-for 0)
-  (message "spice-mode version %s, ? %s" spice-version spice-developer))
+  (message "spice-mode version %s, � %s" spice-version spice-developer))
 
 (defun set-spice-name ()
   "Set mode line name of spice mode"
   (setq mode-name 
 	(concat 
-	 (when (not spice-output-local)
-	   (concat
-	    (when (spice-standard-p 'layla) "Layla")
-	    (when (spice-standard-p 'mondriaan) "-Mdrn")
-	    (when (spice-standard-p 'hspice)
-	      (when (spice-standard-p 'layla) "/"))
-	    (when (spice-standard-p 'hspice) "Hspice")
-	    (when (spice-standard-p 'eldo)
-	      (when (or (spice-standard-p 'hspice) 
-			(spice-standard-p 'layla)) "/"))
-	    (when (spice-standard-p 'eldo) "Eldo")
-	    (when (spice-standard-p 'eldorf) "-RF")
-	    (when (spice-standard-p 'eldovloga) "-VlA")
-	    (when (spice-standard-p 'fasthenry)
-	      (when (or (spice-standard-p 'eldo) 
-			(spice-standard-p 'hspice) 
-			(spice-standard-p 'layla)) "/"))
-	    (when (spice-standard-p 'fasthenry) "FastHenry")
-	    (when (spice-standard-p 'draccdl)
-	      (when (or (spice-standard-p 'eldo) 
-			(spice-standard-p 'hspice) 
-			(spice-standard-p 'layla) 
-			(spice-standard-p 'fasthenry)) "/"))
-	    (when (spice-standard-p 'draccdl) "DracCDL")
-	    (when (spice-standard-p 'spectre)
-	      (when (or (spice-standard-p 'eldo) 
-			(spice-standard-p 'hspice) 
-			(spice-standard-p 'layla) 
-			(spice-standard-p 'fasthenry) 
-			(spice-standard-p 'draccdl)) "/"))
-	    (when (spice-standard-p 'spectre) "Spectre")
-	    (when (or (spice-standard-p 'fasthenry) 
-		      (spice-standard-p 'eldo) 
-		      (spice-standard-p 'hspice) 
-		      (spice-standard-p 'layla) 
-		      (spice-standard-p 'draccdl) 
-		      (spice-standard-p 'spectre)) "|")))
 	 "Spice"
 	 (when spice-output-local "-output")
 	 (when spice-some-comment-regions-are-hidden " H+"))))
@@ -8638,11 +8615,11 @@ Key bindings for other parts in the file:
     ;;------------------------------------------------------------
     ;; now hook in 'spice-colorize-libraries (eldo-mode.el)
     ;; all buffer local:
-    ;;(make-local-hook 'font-lock-mode-hook)
-    (make-local-hook 'font-lock-after-fontify-buffer-hook); doesn't exist in emacs 20
+    ;;(make-local-hook 'font-lock-mode-hook) ; not available since emacs 21.1
+    ;; (make-local-hook 'font-lock-after-fontify-buffer-hook); doesn't exist in emacs 20
     ;;(add-hook 'font-lock-mode-hook 'spice-colorize-libraries-buffer t t)
     (add-hook 'font-lock-after-fontify-buffer-hook 'spice-colorize-libraries-buffer t t) ; not in emacs 20
-    (make-local-hook 'after-change-functions)
+    ;; (make-local-hook 'after-change-functions) ; not available since emacs 21.1
     (add-hook 'after-change-functions 'spice-colorize-libraries t t)
     (spice-colorize-libraries-buffer)
 
