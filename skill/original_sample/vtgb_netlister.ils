@@ -1,0 +1,328 @@
+
+hiSetBindKey("Schematics" "<Key>F11" "bldVtgbAuCdlNetlist()")
+
+when( BCM_PROCESS = getShellEnvVar("BCM_PROCESS")
+    when( turbo_MEMGINEROOT = getShellEnvVar("turbo_MEMGINEROOT")
+      load(strcat(turbo_MEMGINEROOT "/SW/skill_ils/bldLoadSkill.ils"))
+      bldLoadCompilerSkill(
+        ?MEMGINEROOT turbo_MEMGINEROOT
+        ?compilerName BCM_PROCESS
+        ?opt_dont_exit t
+      )
+    )
+  )
+
+procedure( process_vtgb_netlist(theForm)
+letseq(
+   (
+    (VTGB_combos foreach(mapcar opt_vtgb theForm~>toggleInput_vtgb~>_toggleItems
+                    vtgbstr = symbolToString(opt_vtgb)
+                    rexCompile("\\([a-zA-Z]\\)\\([0-9]+\\)")
+                    if( rexExecute(vtgbstr) then
+                      list(rexSubstitute("\\1") rexSubstitute("\\2"))
+                    else
+                       list("as_is" nil)
+                      )))
+    (cvlist         '())
+    (std_suffix     "")
+    (netlistList     '())
+    (libname     theForm~>textInput_libname~>value)
+    (cellname    theForm~>textInput_cellname~>value)
+    (viewname    theForm~>textInput_viewname~>value)
+    (tech        theForm~>textInput_technology~>value)
+    (netlistDir  theForm~>textInput_netlistDir~>value)
+    (no_square_brackets ! theForm~>booleanInput_angle~>value)
+    (hspiceD     theForm~>booleanInput_hspiceD~>value)
+    (multirblk   theForm~>booleanInput_multirblk~>value)
+    (crit_path_lib "UNIT_TESTS")
+    (indb        bldOpenCell(libname cellname viewname "sch" "r"))
+    ref_library_list
+    vtgb_combo
+    renderDir
+    enabled
+   )
+   if(multirblk then
+      cell_list = M16SP_critpath(indb crit_path_lib)
+      libname   = crit_path_lib
+   else
+      cell_list = list(cellname)
+   )
+
+   foreach(cellname cell_list
+     foreach( (vtgb_combo enabled) VTGB_combos theForm~>toggleInput_vtgb~>value
+       when(enabled
+         if(rexMatchp("as_is" car(vtgb_combo)) then
+            printf("INFO: no translation for '%s/%s/%s'\n" libname cellname viewname)
+            if(hspiceD then
+              bcmGenNetlist(libname cellname 
+                                  ?viewname viewname 
+                                  ?outdir netlistDir 
+                                  ?outfile sprintf(nil "%s.cir" cellname))
+            else 
+              bldCDLnetlist16FF(libname
+                              cellname
+                              viewname
+                              netlistDir 
+                              ?donot_change_to_square_brackets no_square_brackets)
+            )
+          
+         else
+           renderDir = sprintf(nil "SKILLGEN_VT_%s_GB_%s"
+                                  car(vtgb_combo) cadr(vtgb_combo))
+           unless( ddGetObj(renderDir)
+              bldCreateLib(tech renderDir getWorkingDir())
+           )
+          ;; clear all cells from temp library
+          mapc('ddDeleteObj ddGetObj(renderDir)->cells)
+          if( ddGetObj(libname cellname viewname) then
+            celldb = bldOpenCell(libname cellname viewname "sch" "r")
+            cond(
+              (rexMatchp("tsmc16" tech)
+                ref_library_list = setof(lib uniq(bldSubCellViews(celldb)~>libName) ! rexMatchp("tsmc" lib))
+                bldShiftGBVT_m16_Suffix(celldb 
+                                        ref_library_list renderDir "" ""
+                                        car(vtgb_combo) atoi(cadr(vtgb_combo)) 
+                                        )
+                if(hspiceD then
+                  bcmGenNetlist(renderDir cellname 
+                       ?viewname viewname 
+                       ?outdir netlistDir 
+                       ?outfile sprintf(nil "%s.%s%s.cir" cellname
+                                            car(vtgb_combo)
+                                            cadr(vtgb_combo)))
+                else
+                  bldCDLnetlist16FF(renderDir
+                                  cellname
+                                  viewname
+                                  netlistDir
+                                  ?donot_change_to_square_brackets no_square_brackets
+                                  ?outfile_name sprintf(nil "%s.%s%s.cir"
+                                                       cellname
+                                                       car(vtgb_combo)
+                                                       cadr(vtgb_combo))
+                                  )
+                )
+              )
+              (t
+                printf("ERROR: unknown tech '%s' for selecting rendering function.\n" tech))
+              )
+            else
+              printf("ERROR: failed to get cell object for '%s/%s/%s'.\n"
+                     libname cellname viewname)
+            ) ;;if ddgetobj
+       ) ;; if as_is
+     ) ;; when enabled
+   )  ;; foreach combo
+   sprintf(buf "ls -ltr %s/%s.*cir" netlistDir cellname)
+   printf("\nCircuit Summary:\n")
+   printf(bldShell(buf))
+   printf(bldShell(sprintf(nil "grep -A3 ERROR %s/si_%s_%s.log" netlistDir libname cellname)))
+   bldShell(sprintf(nil "rm -rf %s/{map,ihnl,netlist}" netlistDir))
+   ) ;; foreach cellname
+)
+)
+
+procedure( M16SP_critpath(celldb dest_library)
+  letseq(
+    (
+      (ref_library_list append(setof(lib uniq(bldSubCellViews(celldb)~>libName) 
+           ! rexMatchp("tsmc" lib))
+           list("UNIT_TESTS")))
+      (cell_list list())
+    )
+    cv = list(nil `temp "temp")
+    cv->library_lookup_order = ref_library_list
+    cv->dest_library = dest_library
+    cv->longSuffix = ""
+    ;loadi(sprintf(nil "%s/%s" getShellEnvVar("turbo_MEMGINEROOT") "SW/skill_ils/bldCompiler.ils" ))
+
+
+    ;; create dest library
+    unless( ddGetObj(dest_library)
+       bldCreateLib(celldb~>lib~>techLibName dest_library getWorkingDir())
+    )
+    ;; copy/modify
+    foreach(rblk list("R2" "R4" "R16")
+      cellname = strcat(celldb~>cellName "." rblk)
+      cell_list = append(cell_list list(cellname))
+      when(ddGetObj(dest_library cellname)
+         ddDeleteObj(ddGetObj(dest_library cellname))
+      )
+      cellObj = bldsMakeCellView(?srcCellName celldb~>cellName
+                  ?destCellName cellname ?modeAlias "edit")
+      cond(
+        (pcreMatchp("R2" rblk)
+           bldsChangeSymRef(cellObj->schObj ?srcInstName "RBLK_b" ?destCellName "cp_rblk_cb1_dmy_short")
+           bldsChangeSymRef(cellObj->schObj ?srcInstName "RLOADBLK" ?destCellName "cp_rblk_cb1_dmy_short")
+           )
+        (pcreMatchp("R4" rblk)
+           bldsChangeSymRef(cellObj->schObj ?srcInstName "RBLK_b" ?destCellName "cp_rblk_cb1_rw")
+           bldsChangeSymRef(cellObj->schObj ?srcInstName "RLOADBLK" ?destCellName "cp_rblk_cb1_dmy_short")
+           )
+        (pcreMatchp("R16" rblk)
+           bldsChangeSymRef(cellObj->schObj ?srcInstName "RBLK_b" ?destCellName "cp_rblk_cb1_rw")
+           bldsChangeSymRef(cellObj->schObj ?srcInstName "RLOADBLK" ?destCellName "cp_rblk_cb1_dmy")
+           )
+        )
+      bldsDone(cellObj->schObj)
+    )
+    cell_list
+)
+)
+
+;procedure( handle_disable(formStruct)
+;  break()
+;)
+
+procedure( bldVtgbAuCdlNetlist()
+let(
+  (
+    guiContext
+    theForm
+    tech
+    cellname
+    netlistDir
+    celldb
+    libname
+    viewname
+    handle_all
+    handle_none
+  )
+  ;; set netlist area
+  if( getShellEnvVar("turbo_NETLIST_DIR") then
+    netlistDir = getShellEnvVar("turbo_NETLIST_DIR")
+  else
+    netlistDir = strcat(pwd() "/../verification/netlist")
+  )
+  if(! isDir(netlistDir) then
+    if(! createDir(netlistDir) then
+      print("ERROR: failed to create netlist directory: '%L'\n" netlistDir)
+    )
+  )
+  ;; get cell name
+  celldb   = hiGetCurrentWindow()~>cellView
+  libname  = celldb~>libName
+  cellname = celldb~>cellName
+  viewname = celldb~>cellViewType
+  tech     = celldb~>lib~>techLibName
+
+  ;; set VT/GB options
+  cond(
+    (rexMatchp("tsmc16" tech)
+       vtgb_combo = '("S20" "S16" "L20" "L16" "U20" "U16" "as_is")
+       vtgb_default = '(nil nil nil nil nil nil t)
+    )
+    (t
+      vtgb_combo = '(("UNKNOWN" 00))
+      vtgb_default = '(nil)
+    )
+  )
+  vtgb_choices = foreach(mapcar opt_vtgb vtgb_combo
+                    list( stringToSymbol(opt_vtgb) opt_vtgb))
+
+
+  procedure(handle_all(field scope buttonName)
+      vtgb_field = field~>usedIn~>toggleInput_vtgb
+      vtgb_field~>value =
+        cycleNTimes(length(car(vtgb_field~>_toggleItems)) `(t))
+  )
+
+  procedure(handle_none(field scope buttonName)
+      vtgb_field = field~>usedIn~>toggleInput_vtgb
+      vtgb_field~>value =
+        cycleNTimes(length(car(vtgb_field~>_toggleItems)) `(nil))
+  )
+
+  procedure(handle_hspiceD(field scope buttonName)
+     hspiceD_field = field~>usedIn~>booleanInput_hspiceD
+     angle_field   = field~>usedIn~>booleanInput_angle
+     angle_field~>enabled = ! car(hspiceD_field~>value)
+  )
+
+  multi_enable = nil
+  when( rexMatchp("crit_path" cellname)
+     multi_enable = t
+  )
+
+  formFields =  list(nil 
+               `textInput_libname
+                  list(nil
+                       `?defValue libname
+                       `?prompt "Library Name"
+                       )
+               `textInput_cellname
+                   list(nil 
+                     `?defValue cellname
+                      `?prompt "Cell Name"
+                   )
+               `textInput_viewname
+                   list(nil
+                        `?defValue viewname
+                        `?prompt "View Name"
+                        )
+
+               `textInput_netlistDir
+                   list(nil 
+                     `?defValue netlistDir
+                      `?prompt "Netlist Directory"
+                   )
+               `textInput_technology
+                   list(nil 
+                     `?defValue tech
+                      `?prompt "Technology"
+                      `?editable nil
+                   )
+               `buttonBox_all
+                   list(nil
+                     `?prompt "VT and GB selection"
+                     `?choices `("All" "None")
+                     `?callback list(handle_all handle_none)
+                     )
+               `toggleInput_vtgb
+                   list(nil
+                        ?prompt "VT and GB options"
+                        ?choices vtgb_choices
+                        ?value vtgb_default
+                   )
+               `booleanInput_hspiceD
+                   list(nil
+                        ?buttonText "hspiceD format"
+                        ?defValue t
+                        ?callback handle_hspiceD
+                        )
+               `booleanInput_angle
+                   list(nil
+                        ?buttonText "Convert top level to []"
+                        ?defValue nil
+                        ?enabled nil
+                        )
+               `booleanInput_multirblk 
+                   list(nil
+                        ?buttonText "Render multi-blk schematics"
+                        ?defValue multi_enable
+                        ?enabled multi_enable
+                        )
+
+               )
+
+
+  guiContext = list(nil 
+  `formFields formFields
+  `?formTitle "VT/GB rendering and netlisting"
+  `?callback `process_vtgb_netlist
+  )
+
+
+
+  theForm = bldsCreateFormFromSpecProp(?guiContext guiContext)
+  ;printf("xy=%L" hiGetFormSize(theForm))
+  ;xy = hiGetFormSize(theForm)
+  ;hiSetFormSize(theForm list(800 250))
+  formStatus = hiDisplayForm(theForm)
+  ;printf("xy=%L" hiGetFormSize(theForm))
+
+
+)
+)
+
+
