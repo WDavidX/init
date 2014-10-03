@@ -102,8 +102,11 @@ when(isCallable('schGetEnv)
     bk("Schematics" "Shift<Key>o"	"schHiOpenCellView()")
     bk("Schematics" "Ctrl<Key>o"	"schHiOpenCellView()")
     ;---------------------------------------------------------------------------
-    bk("Schematics" "<Key>p"		"hiPan()")
-    bk("Schematics" "Shift<Key>p"	"schHiCreatePin()")
+    
+	;bk("Schematics" "<Key>p"		"hiPan()")
+    ;bk("Schematics" "Shift<Key>p"	"schHiCreatePin()")
+	bk("Schematics" "Shift<Key>p"		"hiPan()")
+    bk("Schematics" "<Key>p"	"schHiCreatePin()")
     ;bk("Schematics" "Ctrl<Key>p"	"schHiCreateSymbolPin()")
     bk("Schematics" "Ctrl<Key>p"        "bldSchemPlacePin(bldTechnologyLib \"vdd\")")
     ;---------------------------------------------------------------------------
@@ -143,9 +146,15 @@ when(isCallable('schGetEnv)
 ;   bk("Schematics" "Shift<Key>y"	"")
     bk("Schematics" "Ctrl<Key>y"	"hiPan()")
     ;---------------------------------------------------------------------------
-    bk("Schematics" "<Key>z" 		"hiZoomRelativeScale(getCurrentWindow() 0.5)")
-    bk("Schematics" "Shift<Key>z" 	"hiZoomRelativeScale(getCurrentWindow() 2.0)")
-    bk("Schematics" "Ctrl<Key>z" 	"{hiZoomRelativeScale(getCurrentWindow() 2.0) hiPan()}")
+
+	; original keybind
+	;bk("Schematics" "<Key>z" 		"hiZoomRelativeScale(getCurrentWindow() 0.5)")
+    ;bk("Schematics" "Shift<Key>z" 	"hiZoomRelativeScale(getCurrentWindow() 2.0)")
+    ;bk("Schematics" "Ctrl<Key>z" 	"{hiZoomRelativeScale(getCurrentWindow() 2.0) hiPan()}")
+
+	bk("Schematics" "<Key>z" 		"hiZoomRelativeScale(getCurrentWindow() 0.5)")
+    bk("Schematics" "Shift<Key>z" 	"hiZoomRelativeScale(getCurrentWindow() 0.6)")
+    bk("Schematics" "Ctrl<Key>z" 	"{hiZoomRelativeScale(getCurrentWindow() 1.6) hiPan()}")
 
     ;***************************************************************************
     ; Standard Numeric Keys
@@ -254,8 +263,12 @@ when(isCallable('schGetEnv)
 ;    bk("Schematics" "None<Btn2Down>"  	   "{geAddNetProbe() geSingleSelectPoint()
 ;    					     geSwitch(hiGetCurrentWindow() \"r\"
 ;					     car(selectedSet()) 1 1 1 t)}")
+
     bk("Schematics" "None<Btn3Down>"	   "geAddNetProbe()")
     bk("Schematics" "Shift<Btn3Down> EF"   "schShiftCmdOption()")
+
+    ;***************************************************************************
+    bk("Schematics"  "<DrawThru3>"  "hiZoomIn()" )
 
     ;***************************************************************************
     ; General bindkeys (prefix "Symbol").  These bindkeys are bound to

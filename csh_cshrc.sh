@@ -28,14 +28,14 @@ umask 022
 if ($?prompt) then
   if ( $?tcsh ) then
     # set prompt="%n@%m (%~) % "
-    set prompt  = "%! %T %{\033[1;34m%}%n@%B%m%b%{\033[0;37m%} [%{\033[0;32m%}%B%~%b%{\033[0;37m%}]: "
+    set prompt  = "%! %{\033[1;34m%}%n@%B%m%b%{\033[0;37m%} [%{\033[0;32m%}%B %~ %b%{\033[0;37m%}]: "
     set prompt2 = "%R loop: "
     set prompt3 = "oops\041 %R (y|n|e)? "
   else
     set prompt="`whoami`@`hostname` $cwd: "
   endif
   #
-  set addsuffix autocorrect autoexpand autolist chase_symlinks autolist 
+  set addsuffix autocorrect autoexpand autolist chase_symlinks autolist
   set history = 1000
   set noclobber filec nobeep
   set symlinks=chase
@@ -57,7 +57,7 @@ if ($?prompt) then
   # See man less for more choices for settings.
   #
   setenv LESS eMs
-  
+
   setenv EDITOR emacs
   setenv VISUAL emacs
 else

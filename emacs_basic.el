@@ -41,7 +41,6 @@
 (setq auto-save-default nil)    ;disable auto save
 (setq scroll-margin 3 scroll-conservatively 10000 scroll-up-aggressively 0.01 scroll-down-aggressively 0.01)
 (setq auto-window-vscroll nil)
-(setq tab-width 2)
 (setq compilation-scroll-output t)
 (setq vc-handled-backends nil)
 (setq frame-title-format (list "%b %p  [%f] " (getenv "USERNAME") " %s %Z   " emacs-version))
@@ -50,6 +49,8 @@
 (fset 'yes-or-no-p 'y-or-n-p)  ;; ask by y or n
 (setq tramp-default-method "ftp")
 
+(setq-default tab-width 4)
+(setq-default indent-tab-mod nil)
 ;; ==================== System Coding ====================
 (setq buffer-file-coding-system 'utf-8-unix)
 (setq default-file-name-coding-system 'utf-8-unix)
@@ -60,6 +61,8 @@
 ;; =============== Packages ===============
 ;(require 'eval-after-load)
 ;; =============== Require Packages ===============
+(require 'highlight-chars)
+(add-hook 'font-mode-lock-hook 'hc-hightlight-tabs)
 (require 'cursor-chg) ; Load the library
 (toggle-cursor-type-when-idle 1) ; Turn on cursor change when Emacs is idle
 (change-cursor-mode 1) ; Turn on change for overwrite, read-only, and input mode
