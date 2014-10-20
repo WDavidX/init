@@ -44,9 +44,11 @@ alias bk hiSetBindKey
     bk("Layout" "Ctrl<Key>e"		"TurboCalibreERC()")
     ;---------------------------------------------------------------------------
     bk("Layout" "<Key>f"		"hiZoomAbsoluteScale(hiGetCurrentWindow() 0.9)")
-    bk("Layout" "Shift<Key>f"		"leSetEnv(\"orientation\" \"MY\") leHiMove() mouseAddPt()")
+	;bk("Layout" "Shift<Key>f"		"leSetEnv(\"orientation\" \"MY\") leHiMove() mouseAddPt()")
+    bk("Layout" "Shift<Key>f"		"if(getCurrentWindow()->stopLevel == 0 then     getCurrentWindow()->stopLevel = 20   else     getCurrentWindow()->stopLevel = 0)")
     ;;bk("Layout" "Ctrl<Key>f"		"leSetEnv(\"orientation\" \"MX\") leHiMove() mouseAddPt()")
     bk("Layout" "Ctrl<Key>f"		"leHiSearch()")
+
     ;---------------------------------------------------------------------------
     bk("Layout" "<Key>g"    		"{geSingleSelectPoint()
 					  gePush(hiGetCurrentWindow() \"r\"
@@ -87,10 +89,10 @@ alias bk hiSetBindKey
     bk("Layout" "Shift<Key>n"		"leSetFormSnapMode(\"orthogonal\")")
     bk("Layout" "Ctrl<Key>n"		"leSetFormSnapMode(\"anyAngle\")")
     ;---------------------------------------------------------------------------
-    bk("Layout" "<Key>o"		"geChangeCellView()") 
+    bk("Layout" "<Key>o"		"geChangeCellView()")
     bk("Layout" "Shift<Key>o"		"leHiUnmarkNet()")
     bk("Layout" "Ctrl<Key>o"		"leSetEntryLayer(`(instance drawing))
-    					 leSetAllLayerVisible(nil) leSetAllLayerSelectable(nil) 
+    					 leSetAllLayerVisible(nil) leSetAllLayerSelectable(nil)
 					 leSetLayerVisible(`(instance label) t)
 					 leSetObjectSelectable(\"inst\" t)
 					 leSetObjectSelectable(\"pin\" t)
@@ -160,31 +162,31 @@ alias bk hiSetBindKey
     bk("Layout" "<Key>1"		"{leHiEditDisplayOptions()
                                           leDisplayOptionsForm->type->value = \"none\"
                                           hiFormDone(leDisplayOptionsForm)}")
-    
+
     bk("Layout" "<Key>2"		"hiPan()")
     bk("Layout" "Shift<Key>2"		"hiRedraw()")
     bk("Layout" "Ctrl<Key>2"		"leHiCreateRuler()")
-    
+
     bk("Layout" "<Key>3"		"geSave()")
-    
+
     bk("Layout" "<Key>4"		"{hiGetCurrentWindow()->stopLevel = 0
     					 stopLevelValue = 0}")
-    
+
     bk("Layout" "<Key>5"		"{hiGetCurrentWindow()->stopLevel = stopLevelValue + 1
     					 stopLevelValue = stopLevelValue + 1}")
-    
+
     bk("Layout" "<Key>6"		"{hiGetCurrentWindow()->stopLevel = stopLevelValue - 1
     					 stopLevelValue = stopLevelValue - 1}")
-    
+
     bk("Layout" "<Key>7"		"hiGetCurrentWindow()->stopLevel = 3")
-    
+
     bk("Layout" "<Key>8"		"{hiGetCurrentWindow()->stopLevel = 20
     					 stopLevelValue = 20}")
-    
+
     bk("Layout" "<Key>9"		"{_geProbeOptionsForm->_geAllViewTypes->all->value =  t
 					  geAddNetProbe()}")
     bk("Layout" "Shift<Key>9"		"DS2Opus(nil)")
-    
+
     bk("Layout" "<Key>0"		"geDeleteNetProbe()")
     bk("Layout" "Shift<Key>0"  		"geDeleteAllProbe()")
 
@@ -193,9 +195,9 @@ alias bk hiSetBindKey
     ; Special Keys
     ;***************************************************************************
 
-    bk("Layout" "Shift<Key>="		"leHiSize()") 
+    bk("Layout" "Shift<Key>="		"leHiSize()")
 
-    bk("Layout" "<Key>,"		"leHiClearRuler()") 
+    bk("Layout" "<Key>,"		"leHiClearRuler()")
 
     bk("Layout" "<Key>."		"leHiCreateRuler()")
     bk("Layout" "Shift<Key>."		"leHiReShape()")
@@ -212,13 +214,13 @@ alias bk hiSetBindKey
     bk("Layout" "<Key>]"		"hiCloseWindow(hiGetCurrentWindow())")
 
     bk("Layout" "<Key>Escape EF"	"cancelEnterFun()")
-    
+
     bk("Layout" "backspace"		"leHiDelete()")
     bk("Layout" "backspace EF"		"leHiDelete()")
-   
+
     bk("Layout" "<Key>Delete"		"leHiDelete()")
     bk("Layout" "<Key>Delete EF"	"leHiDelete()")
-    
+
     bk("Layout" "<Key>Tab"		"finishEnterFun()")
 
 
@@ -261,15 +263,15 @@ alias bk hiSetBindKey
     ; NWELL/Implants
     bk("Layout" "<Key>F1"	"bldToggleLayer(`(DNW PP NP))
 				 bldToggleLayer(`(PM) `drawing1)")
-    
+
     ; Actives
     bk("Layout" "<Key>F2"	"bldToggleLayer(`(OD NW))")
-    
+
     ; Poly
     bk("Layout" "<Key>F3"	"bldToggleLayer(`(PO CPO SENDMY))
                                  bldToggleLayer(`(PO) `test2)
                                  bldToggleLayer(`(PO) `dummy1)")
-    
+
     ; Contact/Via's
     bk("Layout" "<Key>F4"	"bldToggleLayer(`(CM0OD M0OD M0PO VIA0 RVIA0 VIA1 VIA2 VIA3 ))")
 
@@ -289,11 +291,11 @@ alias bk hiSetBindKey
 
 
     bk("Layout" "Ctrl<Key>F4"	"bldToggleLayer(`(VIA4 VIA5 VIA6 RVE))")
-    
+
     ; Metal 1
     bk("Layout" "<Key>F5"	"bldToggleLayer(`(M1))
     				 bldToggleLayer(`(M1) `pin)")
-    
+
     ; Metal 1 fil
     bk("Layout" "Shift<Key>F5"  "bldToggleLayer(`(M1) `fill)")
 
@@ -303,11 +305,11 @@ alias bk hiSetBindKey
     ; Metal 2 fil
     bk("Layout" "Shift<Key>F6"  "bldToggleLayer(`(M2) `fill)")
 
-    
+
     ; Metal 3
     bk("Layout" "<Key>F7"	"bldToggleLayer(`(M3))
     				 bldToggleLayer(`(M3) `pin)")
-    
+
     ; Metal 3 fil
     bk("Layout" "Shift<Key>F7"  "bldToggleLayer(`(M3) `fill)")
 
@@ -345,13 +347,13 @@ alias bk hiSetBindKey
 
     ; Misc Core Crap
     ;bk("Layout" "Shift<Key>F9"	"bldToggleLayer(`(MEMCDRC MEMCORE SRAMSQCO MEMVTCN MEMVTCP MEMVNPRE DRAMCO MEMIDDP MEMCONLY MEMIDUHD MEMIDHC MEMIDHD MEMIDLV MEMIDHCDP MEMID8TP MEMID10TP MEMDUMOD1 MEMDUMOD2 MEMDUMOD3 MEMDUMOD4 MEMDUMOD5 MEMDUDMOD6 MEMDEMOD7 MEMDUMOD8 MEMDUMOD9 MEMDUMOD10 MEMDUMOD11 MEMDUMOD12 MEMDUMOD13 MEMDUMOD14 MEMDUMOD15 MEMDUMOD16 MEMDUMP01 MEMDUMP02 MEMDUMP03 MEMDUMP04 MEMDUMP05 MEMDUMP06 MEMDUMP07))")
-    
+
     ; Text's
     bk("Layout" "<Key>F10"	"bldToggleLayer(`(text TEXT STDTXT BOUNDARY ))
     				 bldToggleLayer(`(NWELL PSUB2 POLY M1 M2 M3 M4 M5 M6 M7 AP STDTXT TEXT) `label)
                                  bldToggleLayer(`(prBoundary) `boundary)")
-                                
-    
+
+
     ; No layers
     bk("Layout" "<Key>F11"	"leSetAllLayerVisible(nil) leSetAllLayerSelectable(nil) hiRedraw()")
 
@@ -366,7 +368,7 @@ alias bk hiSetBindKey
     moveDelta = 0.005
     KPmoveDelta = 0.5
     scrollDelta = 10
-    
+
     bk("Layout" "<Key>Down"		"leMoveCursor(         0   -moveDelta)")
     bk("Layout" "<Key>Left"		"leMoveCursor(-moveDelta            0)")
     bk("Layout" "<Key>Right"		"leMoveCursor( moveDelta            0)")
@@ -381,7 +383,7 @@ alias bk hiSetBindKey
     bk("Layout" "<Key>KP_7"		"geScroll(nil  \"nw\"	    nil)")
     bk("Layout" "<Key>KP_8"		"geScroll(nil  \"n\"	    nil)")
     bk("Layout" "<Key>KP_9"		"geScroll(nil  \"ne\"	    nil)")
-    
+
     bk("Layout" "Shift<Key>KP_1"	"leMoveCursor(-KPmoveDelta -KPmoveDelta)")
     bk("Layout" "Shift<Key>KP_2"	"leMoveCursor(           0 -KPmoveDelta)")
     bk("Layout" "Shift<Key>KP_3"	"leMoveCursor( KPmoveDelta -KPmoveDelta)")

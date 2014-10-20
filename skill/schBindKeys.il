@@ -53,6 +53,7 @@ when(isCallable('schGetEnv)
     bk("Schematics" "<Key>f" 		"hiZoomAbsoluteScale(getCurrentWindow() 1.0)")
     bk("Schematics" "Shift<Key>f"	"schSetEnv(\"sideways\" t) schHiMove() mouseAddPt()")
     bk("Schematics" "Ctrl<Key>f"  	"schSetEnv(\"upsideDown\" t) schHiMove() mouseAddPt()")
+
     ;---------------------------------------------------------------------------
     bk("Schematics" "<Key>g"            "{geSingleSelectPoint() schHiDescendRead()}")
     ;bk("Schematics" "<Key>g"            "{geSingleSelectPoint()
@@ -102,7 +103,7 @@ when(isCallable('schGetEnv)
     bk("Schematics" "Shift<Key>o"	"schHiOpenCellView()")
     bk("Schematics" "Ctrl<Key>o"	"schHiOpenCellView()")
     ;---------------------------------------------------------------------------
-    
+
 	;bk("Schematics" "<Key>p"		"hiPan()")
     ;bk("Schematics" "Shift<Key>p"	"schHiCreatePin()")
 	bk("Schematics" "Shift<Key>p"		"hiPan()")

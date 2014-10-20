@@ -29,8 +29,11 @@
 (display-time)
 (global-font-lock-mode t)
 (show-paren-mode t)
-(menu-bar-mode -1)
+(menu-bar-mode 1)
 (tool-bar-mode -1)
+(recentf-mode 1)
+(setq recentf-max-menu-items 15)
+(global-set-key "\C-c\ \C-r" 'recentf-open-files)
 ;; =============== Variables ===============
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-echo-area-message t)
