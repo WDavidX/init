@@ -67,6 +67,10 @@ else
   unset noclobber
 endif
 
+if ( -f ~/init/bash_startup.sh & $?prompt) then
+    bash  ~/init/bash_startup.sh
+endif
+
 ############################################################
 #### My tcsh configurations
 ############################################################
