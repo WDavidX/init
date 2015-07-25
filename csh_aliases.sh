@@ -32,6 +32,8 @@ alias ww        'wv *.fsdb -k &'
 alias ssh       'ssh -X -i ~/.ssh/id_rsa'
 alias scp       'scp -i ~/.ssh/id_rsa'
 
+alias top 'top -u $USER'
+
 if ( $?tcsh ) then
 	bindkey '\e[1~' beginning-of-line      # Home
 	bindkey '\e[3~' delete-char            # Delete
