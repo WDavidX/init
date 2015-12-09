@@ -2,17 +2,18 @@
 #   Default user .aliases
 
 alias a		'alias \!:*'
-alias cd	'cd \!:*; echo $cwd'
+alias cd	'cd \!:*; echo $cwd; ls -F --color=auto'
 alias pwd	'echo $cwd'
-alias ls        'ls -F --color=tty'
-alias la        'ls -ACF -h --color=tty'
-alias lla	'ls  -lFA -h --color=tty'
-alias ll	'ls  -lF -h --color=tty'
-alias rm	'rm -r'
+alias ls        'ls -F'
+alias l        'ls -F --color=auto'
+alias la        'ls -ACF -h --color=auto'
+alias lla	'ls  -lFA -h --color=auto'
+alias ll	'ls  -lF -h --color=auto'
+alias rm	'rm '
 alias cp	'cp -r'
 alias j		'jobs -l'
 alias h		'history'
-alias grep      'grep --color=auto'
+alias grep      'grep --color=auto -i'
 alias src	'source ~/.cshrc'
 alias v         'vncserver -depth 24 -geometry \!:1x\!:2 '
 alias vv	'vncserver -depth 24 -geometry 1920x1000'
@@ -23,11 +24,15 @@ alias dua       'du --max-depth=0 -ahc * && echo " "'
 alias dus       'du --max-depth=0 -kc -a * | sort && echo " " '
 alias duf 	   'du -sk * | sort -n | perl -ne '\''($s,$f)=split(m{\t});for (qw(K M G)) {if($s<1024) {printf("%.1f",$s);print "$_\t$f"; last};$s=$s/1024}'\'
 
-# alias emacs     'emacs \!:* '
+alias emc     'emacs \!:* &'
 alias gedit     'gedit \!:* &'
+alias wv        'wv \!:* -k &'
+alias ww        'wv *.fsdb -k &'
 
 alias ssh       'ssh -X -i ~/.ssh/id_rsa'
 alias scp       'scp -i ~/.ssh/id_rsa'
+
+alias top 'top -u $USER'
 
 if ( $?tcsh ) then
 	bindkey '\e[1~' beginning-of-line      # Home
@@ -81,3 +86,16 @@ endif
 #### My tcsh configurations
 ############################################################
 
+
+alias xkonsole  'bsub -R \"rhel50\" -m lc-irv-1481 -q irv-Ilib konsole &'
+#alias xkonsole  'bsub -R rhel  -m lc-irv-1491 -q irv-Ilib konsole &'
+alias xkonsole  'bsub -R \"rhel50\" -m lc-irv-1476 -q irv-Ilib konsole &'
+
+alias xicm  'projicm BLDM16XP -projectdisk libdev_sram_ws -workdir "BLDM16XP/M16XP" -scratchdisk libdev_sram_scratch &'
+
+alias sprun './spicerunner run --run-crit --toolver ricks --clean-all'
+alias spc 'rm -rf ./root ; ./spicerunner run --run-crit --toolver ricks --clean-all'
+alias spview './spicerunner view --toolver ricks'
+
+
+alias xterm 'xterm -fg white -bg black'
