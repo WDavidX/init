@@ -95,7 +95,7 @@ if [ -t 1 ] ; then
     # PS1=">\[\033[s\]\[\033[1;\$((COLUMNS-5))f\]\$(date +%H:%M)\[\033[u\]" Time on top right
     # PS1="\$? \$(if [[ \$? == 0 ]]; then echo \"\[\033[0;32m\];)\"; else echo \"\[\033[0;31m\];(\"; fi)\[\033[00m\] : "
     # PS1="$(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;32m\]\u@\h'; fi)\[\033[01;34m\] \w \$([[ \$? != 0 ]] && echo \"\[\033[01;31m\]:(\[\033[01;34m\] \")\\$\[\033[00m\] "
-    PS1="\n# ${Cyan}\#/\! ${Green}\u@\h ${Cyan}\$(date +%k:%M:%S) ${BBlue}\w${Color_Off}   \n  "
+    PS1="\n# ${Cyan}\#/\! ${Green}\u@\h ${Cyan}\$(date +%k:%M:%S) ${BBlue}\w${Color_Off}   \n    "
 fi
  
 ############################################################

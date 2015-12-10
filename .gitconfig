@@ -12,6 +12,7 @@
 	pager = less -R
 	editor = emacs -q
 	autocrlf = input
+	excludesfile = ~/init/.gitignore_global
 	
 	
 	
@@ -26,7 +27,7 @@
   le = log --oneline --decorate
   dl = "!git ll -1"         # Show modified files in last commit
   dlc = diff --cached HEAD^ # dlc = diff --cached HEAD^
-  graph = log --all --graph --decorate --oneline -n30
+  graph = log --all --graph --decorate --oneline -n20
   
   cb = !git branch | grep ^* | cut -d' ' -f2
   sb = !ls .git/refs/remotes/*/$(git cb) | cut -d/ -f4,5 | \

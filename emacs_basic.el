@@ -3,6 +3,7 @@
 ;; (remove-hook 'find-file-hook 'vc-find-file-hook)
 ;; =============== Global Varibles ===============
 ;;(require 'cl) ; a rare necessary use of REQUIRE
+
 (defvar *emacs-load-start* (current-time))
 (defvar myinit-dir "~/init")
 (defvar myplugin-dir (concat myinit-dir "/eplugins"))
