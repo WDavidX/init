@@ -45,7 +45,15 @@ alias duf='du -sk * | sort -n | perl -ne '\''($s,$f)=split(m{\t});for (qw(K M G)
 ############################################################
 ########## Terminal Only Configuration
 ############################################################
-alias v='tightvncserver -depth 16 -geometry \!:1x\!:2 '
+function vnc_start_server(){
+    tightvncserver -depth 16 -geometry $1x$2
+}
+function vnc_kill_server(){
+    tightvncserver -kill :$1
+    }
+
+alias v=vnc_server_server
+alias v=vnc_kill_server
 alias vv='tightvncserver -depth 16 -geometry 1920x1000'
-alias vk='tightvncserver -kill :\!:1'
+#alias vk='tightvncserver -kill :\!:1'
 alias vps='find ~/.vnc/ -name "*.pid"'
