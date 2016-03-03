@@ -90,12 +90,18 @@ LS_COLORS=$LS_COLORS:'di=4;34:ln=1;35:or=0;31;01:mi=01;05;95:' ; export LS_COLOR
 ############################################################
 ########## Terminal Only Configuration
 ############################################################
+NAME_INIT='init'
+DIR_INIT="${HOME}/${NAME_INIT}"
+
+############################################################
+########## Terminal Only Configuration
+############################################################
 
 if [ -t 1 ] ; then 
     # PS1=">\[\033[s\]\[\033[1;\$((COLUMNS-5))f\]\$(date +%H:%M)\[\033[u\]" Time on top right
     # PS1="\$? \$(if [[ \$? == 0 ]]; then echo \"\[\033[0;32m\];)\"; else echo \"\[\033[0;31m\];(\"; fi)\[\033[00m\] : "
     # PS1="$(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;32m\]\u@\h'; fi)\[\033[01;34m\] \w \$([[ \$? != 0 ]] && echo \"\[\033[01;31m\]:(\[\033[01;34m\] \")\\$\[\03
-    PS1_DEFAULT="\n# ${Cyan}\#/\! ${Green}\u@\h ${Cyan}\$(date +%k:%M:%S) ${BBlue}\w${Color_Off}   \n    "
+    BASH_PS1_DEFAULT="\n# ${Cyan}\#/\! ${Green}\u@\h ${Cyan}\$(date +%k:%M:%S) ${BBlue}\w${Color_Off}   \n    "
 fi
  
 ############################################################
@@ -103,7 +109,7 @@ fi
 ############################################################
 
 if [ "${SHELL}" = "/bin/bash" ] ; then 
-  PS1=${PS1_DEFAULT}
+  PS1=${BASH_PS1_DEFAULT}
 fi
 
 for file_itr in $(ls /etc/bash_completion.d -I lldptool -I lldpad -I fcoeadm -I fcoemon -I insserv -I debconf -I desktop-file-validate -I jackd -I gem1.9.1)
@@ -114,11 +120,23 @@ for file_itr in $(ls /etc/bash_completion.d -I lldptool -I lldpad -I fcoeadm -I 
 		echo ${file_name}
 	fi	
     . ${file_name} >/dev/null
-  done
+done
+  
+  
 
 ############################################################
 ########## BASH Alaises
 ############################################################
+for file_itr in $(find ${DIR_INIT}  -maxdepth 1 -name "bash_*.sh" -type f  ! -name "bash_bashrc.sh" -printf "%f ")
+  do
+    file_name="${DIR_INIT}/${file_itr}"
+    if [ -t -1 ] ; then 
+		echo "----------------------"
+		echo ${file_name}
+	fi	
+    source $file_name
+done
+  
 if [ -f ~/init/bash_aliases.sh ]; then
     source ~/init/bash_aliases.sh
 fi
