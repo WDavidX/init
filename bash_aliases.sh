@@ -9,6 +9,7 @@ alias s='source ~/.bashrc'
 alias h='history'
 alias j='jobs -l'
 
+
 ############################################################
 ########## Functions
 ############################################################
@@ -53,7 +54,7 @@ function vnc_kill_server(){
     }
 
 alias v=vnc_server_server
-alias v=vnc_kill_server
+alias vk=vnc_kill_server
 alias vv='tightvncserver -depth 16 -geometry 1920x1000'
 #alias vk='tightvncserver -kill :\!:1'
 alias vps='find ~/.vnc/ -name "*.pid"'

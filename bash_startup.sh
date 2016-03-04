@@ -17,6 +17,6 @@ echo "$(tput setaf 2)
 ( : '~'.~.'~' : ) Load Averages......: ${one}, ${five}, ${fifteen} (1, 5, 15 min)
  ~ .~ (   ) ~. ~  Running Processes..: `ps ax | wc -l | tr -d " "`
   (  : '~' :  )   IP Addresses.......: LAN `/sbin/ifconfig eth0 | /bin/grep "inet addr" | /usr/bin/cut -d ":" -f 2 | /usr/bin/cut -d " " -f 1`   WLAN `wget -q -O - http://icanhazip.com/ | tail`
-   '~ .~~~. ~'    Weather............: `curl -s "http://rss.accuweather.com/rss/liveweather_rss.asp?locCode=55414" | sed -n '/Currently:/ s/.*: \(.*\): \([0-9]*\)\([CF]\).*/\2бу\3, \1/p'`
+   '~ .~~~. ~'    Weather............: `curl -s "http://rss.accuweather.com/rss/liveweather_rss.asp?locCode=55414" | sed -n '/Currently:/ s/.*: \(.*\): \([0-9]*\)\([CF]\).*/\2 \3, \1/p'`
        '~'
 $(tput sgr0)"

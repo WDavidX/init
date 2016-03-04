@@ -110,17 +110,20 @@ fi
 
 if [ "${SHELL}" = "/bin/bash" ] ; then 
   PS1=${BASH_PS1_DEFAULT}
+  . /etc/bash_completion
 fi
 
-for file_itr in $(ls /etc/bash_completion.d -I lldptool -I lldpad -I fcoeadm -I fcoemon -I insserv -I debconf -I desktop-file-validate -I jackd -I gem1.9.1)
-  do
-    file_name="/etc/bash_completion.d/${file_itr}"
-	if [ -t -1 ] ; then 
-		echo "----------------------"
-		echo ${file_name}
-	fi	
-    . ${file_name} >/dev/null
-done
+
+
+# for file_itr in $(ls /etc/bash_completion.d -I lldptool -I lldpad -I fcoeadm -I fcoemon -I insserv -I debconf -I desktop-file-validate -I jackd -I gem1.9.1 -I inkspace)
+  # do
+    # file_name="/etc/bash_completion.d/${file_itr}"
+	# if [ -t -1 ] ; then 
+		# echo "----------------------"
+		# echo ${file_name}
+	# fi	
+    # . ${file_name} >/dev/null
+# done
   
   
 
@@ -130,11 +133,13 @@ done
 for file_itr in $(find ${DIR_INIT}  -maxdepth 1 -name "bash_*.sh" -type f  ! -name "bash_bashrc.sh" -printf "%f ")
   do
     file_name="${DIR_INIT}/${file_itr}"
-    if [ -t -1 ] ; then 
-		echo "----------------------"
-		echo ${file_name}
-	fi	
-    source $file_name
+    if [ -t 1 ] ; then 
+	echo "----------------------"
+	echo ${file_name}
+	source $file_name 
+    else
+        source $file_name > /dev/null
+    fi  
 done
   
 if [ -f ~/init/bash_aliases.sh ]; then
