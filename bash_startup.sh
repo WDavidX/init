@@ -16,7 +16,7 @@ echo "$(tput setaf 2)
  ~ (   ) (   ) ~  Memory.............: `cat /proc/meminfo | grep MemFree | awk {'print $2'}`kB (Free) / `cat /proc/meminfo | grep MemTotal | awk {'print $2'}`kB (Total)
 ( : '~'.~.'~' : ) Load Averages......: ${one}, ${five}, ${fifteen} (1, 5, 15 min)
  ~ .~ (   ) ~. ~  Running Processes..: `ps ax | wc -l | tr -d " "`
-  (  : '~' :  )   IP Addresses.......: LAN `/sbin/ifconfig eth0 | /bin/grep "inet addr" | /usr/bin/cut -d ":" -f 2 | /usr/bin/cut -d " " -f 1`   WLAN `wget -q -O - http://icanhazip.com/ | tail`
+  (  : '~' :  )   IP Addresses.......: LAN `/sbin/ifconfig eth0 2>/dev/null | /bin/grep "inet addr" | /usr/bin/cut -d ":" -f 2 | /usr/bin/cut -d " " -f 1`   WLAN `wget -q -O - http://icanhazip.com/ | tail`
    '~ .~~~. ~'    Weather............: `curl -s "http://rss.accuweather.com/rss/liveweather_rss.asp?locCode=55414" | sed -n '/Currently:/ s/.*: \(.*\): \([0-9]*\)\([CF]\).*/\2 \3, \1/p'`
-       '~'
+       '~'        CPU Model..........: `cat /proc/cpuinfo | grep  --ignore-case "model name"| grep -oP '(?<=: ).*'`
 $(tput sgr0)"
