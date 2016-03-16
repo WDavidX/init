@@ -58,3 +58,6 @@ alias vk=vnc_kill_server
 alias vv='tightvncserver -depth 16 -geometry 1920x1000'
 #alias vk='tightvncserver -kill :\!:1'
 alias vps='find ~/.vnc/ -name "*.pid"'
+
+alias tvoff='sudo /opt/vc/bin/tvservice -p; sudo /opt/vc/bin/tvservice -o'
+alias tvon='/opt/vc/bin/tvservice -p ; sudo chvt 6; sudo chvt 7'

@@ -17,10 +17,14 @@ DIR_DOTFILES="${DIR_INIT}/dotfiles"
 ############################################################
 
 if [ -t 1 ] ; then 
-    # PS1=">\[\033[s\]\[\033[1;\$((COLUMNS-5))f\]\$(date +%H:%M)\[\033[u\]" Time on top right
-    # PS1="\$? \$(if [[ \$? == 0 ]]; then echo \"\[\033[0;32m\];)\"; else echo \"\[\033[0;31m\];(\"; fi)\[\033[00m\] : "
-    # PS1="$(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;32m\]\u@\h'; fi)\[\033[01;34m\] \w \$([[ \$? != 0 ]] && echo \"\[\033[01;31m\]:(\[\033[01;34m\] \")\\$\[\03
-    BASH_PS1_DEFAULT="\n# ${Cyan}\#/\! ${Green}\u@\h ${Cyan}\$(date +%k:%M:%S) ${BBlue}\w${Color_Off}   \n    "
+  # PS1=">\[\033[s\]\[\033[1;\$((COLUMNS-5))f\]\$(date +%H:%M)\[\033[u\]" Time on top right
+  # PS1="\$? \$(if [[ \$? == 0 ]]; then echo \"\[\033[0;32m\];)\"; else echo \"\[\033[0;31m\];(\"; fi)\[\033[00m\] : "
+  # PS1="$(if [[ ${EUID} == 0 ]]; then echo '\[\033[01;31m\]\h'; else echo '\[\033[01;32m\]\u@\h'; fi)\[\033[01;34m\] \w \$([[ \$? != 0 ]] && echo \"\[\033[01;31m\]:(\[\033[01;34m\] \")\\$\[\03
+  if [ -f "${DIR_INIT}/bash_color.sh" ] 
+  then 
+    source "${DIR_INIT}/bash_color.sh"
+  fi
+  BASH_PS1_DEFAULT="\n# ${Cyan}\#/\! ${Green}\u@\h ${Cyan}\$(date +%k:%M:%S) ${BBlue}\w${Color_Off}   \n    "
 fi
  
 ############################################################
@@ -36,7 +40,7 @@ fi
 ############################################################
 ########## BASH Alaises
 ############################################################
-for file_itr in $(find ${DIR_INIT}  -maxdepth 1 -name "bash_*.sh" -type f  ! -name "bash_bashrc.sh" -printf "%f ")
+for file_itr in $(find ${DIR_INIT}  -maxdepth 1 -name "bash_*.sh" -type f  ! -name "bash_bashrc.sh" ! -name "bash_color.sh" -printf "%f ")
   do
     file_name="${DIR_INIT}/${file_itr}"
     if [ -t 1 ] ; then  # terminal output

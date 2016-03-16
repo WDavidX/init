@@ -84,6 +84,20 @@ def startup(dir_working=_DIR_WORK):
 
 
 ############################################################
+########## Module functions
+############################################################
+def user_func():
+    pass
+
+
+############################################################
+########## Module classes
+############################################################
+class UserClass():
+    pass
+
+
+############################################################
 ########## Module main functions
 ############################################################
 
@@ -93,14 +107,13 @@ def main_work():
 def main():
 
     print _ARGS
-    print _ARGS.loops
 
     _T_START = time()
     main_work()
     _T_STOP = time()
     t_main=_T_STOP-_T_STOP
-    print 'Sec/Min/Hour: %.2f/%.2f/%.2f'%(t_main,t_main/60.0,t_main/3600.0),'\t\t',\
-        'Start: ', strftime(_FMT_TIME,localtime(_T_START)), '\t\tStop: ',strftime(_FMT_TIME,localtime())
+    print '>>>>> Sec/Min/Hour: %.2g/%.2g/%.2g'%(t_main,t_main/60.0,t_main/3600.0),'\t',\
+        'Start: ', strftime(_FMT_TIME,localtime(_T_START)), '\tStop: ',strftime(_FMT_TIME,localtime())
 
 if __name__ == '__main__':
     startup()
